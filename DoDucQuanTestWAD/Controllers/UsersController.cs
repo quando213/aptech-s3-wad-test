@@ -4,16 +4,31 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using DoDucQuanTestWAD.Data;
 using DoDucQuanTestWAD.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace DoDucQuanTestWAD.Controllers
 {
     public class UsersController : Controller
     {
-        private MyIdentityDbContext db = new MyIdentityDbContext();
+        private MyIdentityDbContext db;
+        private UserManager<User> userManager;
+        private RoleManager<Role> roleManager;
+
+        public UsersController()
+        {
+            db = new MyIdentityDbContext();
+            UserStore<User> userStore = new UserStore<User>(db);
+            userManager = new UserManager<User>(userStore);
+            RoleStore<Role> roleStore = new RoleStore<Role>(db);
+            roleManager = new RoleManager<Role>(roleStore);
+        }
 
         // GET: Users
         public ActionResult Index()
@@ -47,13 +62,15 @@ namespace DoDucQuanTestWAD.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,IdentityNumber,PhoneNumber,Email,Status,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName")] User user)
+        public async Task<ActionResult> Create([Bind(Include = "Id,IdentityNumber,PhoneNumber,Email,Status,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName")] User user)
         {
             if (ModelState.IsValid)
             {
-                db.Users.Add(user);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var result = await userManager.CreateAsync(user, user.PasswordHash);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
             }
 
             return View(user);
@@ -123,6 +140,29 @@ namespace DoDucQuanTestWAD.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Login(string UserName, string PasswordHash)
+        {
+            var user = await userManager.FindAsync(UserName, PasswordHash);
+            if (user == null)
+            {
+                ViewBag.Errors = new string[] { "Invalid credentials" };
+                return View("Error");
+            }
+            else
+            {
+                SignInManager<User, string> signInManager = new SignInManager<User, string>(userManager, Request.GetOwinContext().Authentication);
+                await signInManager.SignInAsync(user, false, false);
+                return Redirect("/Home");
+            }
         }
     }
 }
