@@ -6,14 +6,14 @@ namespace DoDucQuanTestWAD.Migrations
     using System.Data.Entity.Migrations.Infrastructure;
     using System.Resources;
     
-    [GeneratedCode("EntityFramework.Migrations", "6.1.0-30225")]
+    [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
     public sealed partial class InitDatabase : IMigrationMetadata
     {
         private readonly ResourceManager Resources = new ResourceManager(typeof(InitDatabase));
         
         string IMigrationMetadata.Id
         {
-            get { return "202203081221353_InitDatabase"; }
+            get { return "202203100416151_InitDatabase"; }
         }
         
         string IMigrationMetadata.Source

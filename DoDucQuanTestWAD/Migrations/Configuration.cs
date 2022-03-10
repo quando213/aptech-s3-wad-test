@@ -1,8 +1,6 @@
 namespace DoDucQuanTestWAD.Migrations
 {
-    using DoDucQuanTestWAD.Models;
     using System;
-    using System.Collections.Generic;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
@@ -28,15 +26,6 @@ namespace DoDucQuanTestWAD.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
-            var roles = new List<Role>
-            {
-            new Role{Name="Admin", Description="Admin"},
-            new Role{Name="User", Description="User"},
-            new Role{Name="Employee", Description="Employee"},
-            };
-
-            roles.ForEach(s => context.Roles.Add(s));
-            context.SaveChanges();
         }
     }
 }

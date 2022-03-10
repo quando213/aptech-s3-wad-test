@@ -36,6 +36,18 @@ namespace DoDucQuanTestWAD.Controllers
             return View(db.Users.ToList());
         }
 
+        [HttpPatch]
+        public ActionResult SetStatus()
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(user);
+        }
+
         // GET: Users/Details/5
         public ActionResult Details(string id)
         {

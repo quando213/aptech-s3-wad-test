@@ -37,19 +37,19 @@ namespace DoDucQuanTestWAD.Migrations
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
-                        IdentityNumber = c.String(),
-                        PhoneNumber = c.String(),
-                        Email = c.String(maxLength: 256),
+                        IdentityNumber = c.String(nullable: false),
+                        PhoneNumber = c.String(nullable: false),
+                        Email = c.String(nullable: false, maxLength: 256),
                         Status = c.Int(nullable: false),
+                        UserName = c.String(nullable: false, maxLength: 256),
+                        PasswordHash = c.String(nullable: false),
                         EmailConfirmed = c.Boolean(nullable: false),
-                        PasswordHash = c.String(),
                         SecurityStamp = c.String(),
                         PhoneNumberConfirmed = c.Boolean(nullable: false),
                         TwoFactorEnabled = c.Boolean(nullable: false),
                         LockoutEndDateUtc = c.DateTime(),
                         LockoutEnabled = c.Boolean(nullable: false),
                         AccessFailedCount = c.Int(nullable: false),
-                        UserName = c.String(nullable: false, maxLength: 256),
                     })
                 .PrimaryKey(t => t.Id)
                 .Index(t => t.UserName, unique: true, name: "UserNameIndex");
